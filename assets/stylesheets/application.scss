@@ -5,3 +5,17 @@ body {
   margin-top: 20px;
   margin-bottom: 20px;
 }
+
+.message-list{
+  border: 2px solid green;
+  width:50%;
+  height:auto;
+  margin-left:20px;
+
+  .message{
+    margin-left:10px;
+    width:300px;
+    height: auto;
+    border:1px solid red;
+  }
+}
