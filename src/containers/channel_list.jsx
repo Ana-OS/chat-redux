@@ -1,34 +1,58 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux'; 
 import { connect } from 'react-redux';
-import { setChannels } from '../actions';
+import { selectChannel } from '../actions';
+import { setMessages } from '../actions';
+
 
 
 class ChannelList extends Component {
-    componentWillMount(){
-        this.props.setChannels();
-    }
+    // se nos próximos props o selectedChannel for diferent do channel em que estou entao tenho de fazer nova API call para receber as mensagens desse channel
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.selectedChannel !== this.props.selectedChannel) {
+          this.props.setMessages(nextProps.selectedChannel);
+        }
+      }
+      handleClick = (channel) => {
+        this.props.selectChannel(channel);
+      }
+    
+      renderChannel = (channel) => {
+        return (
+          <li
+            key={channel}
+            className={channel === this.props.selectedChannel ? 'active' : null}
+            onClick={() => this.handleClick(channel)}
+            role="presentation"
+          >
+            #{channel}
+          </li>
+        );
+      }
     
     render() {
-        return (
-            <div className="channel-list col-10">
-                {this.props.channels.map(channel => <Channel channel={channel} key={channel.name} />)}
-            </div>
-        );
-    }
+    return (
+      <div className="channels-container">
+        <span>Redux Chat</span>
+        <ul>
+          {this.props.channels.map(this.renderChannel)}
+        </ul>
+      </div>
+    );
+  }
 };
 
-function mapDispatchToProps(dispatch){
-    return bindActionCreators(
-       { setChannels: setChannels },
-       dispatch
-    )
-};
 
 function mapStateToProps(state){
     return{
-        channels: state.channels
+        channels: state.channelList,
+        selectedChannel: state.selectedChannel
     };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ selectChannel, setMessages }, dispatch);
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(ChannelList)

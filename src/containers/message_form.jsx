@@ -8,31 +8,56 @@ import { createMessage } from '../actions';
 class MessageForm extends Component {
     constructor(props){
         super(props)
-
-        state = {
-            body: {
-                author: '',
-                content: '',
-                // created_at: `${Date.now}`
-            }
-        }
+        this.state = { value: ''}
     }
 
+    componentDidMount() {
+        this.messageBox.focus();
+      }
+
+    handleChange = (event) => {
+        this.setState({ value: event.target.value });
+      }
+
     handleSubmit = (e) => {
-        this.setState({
-            body: e.target.value
-        })
-        return createMessage()
+        e.preventDefault();
+        this.props.createMessage(this.props.channel, this.props.author, this.state.value)
+        this.setState({value:''})
     }
 
     render(){
         return(
-           <form className="form-control" onChange={this.handleSubmit()}>
-               <input type="text" name="author" />
+            <form onSubmit={this.handleSubmit} className="channel-editor">
+           <input 
+            ref={(input) => { this.messageBox = input; }}
+            type="text" 
+            id="content" 
+            className="form-control"                 
+            autoComplete="off"
+            value={this.state.value}
+            onChange={this.handleChange}
+            /> 
+            <button type="submit">Send</button>
            </form>
+
         )
     }
 }
 
 
-export default MessageForm;
+function mapStateToProps(state){
+    return{
+        channel: state.selectedChannel,
+        author: state.currentUser
+    }
+}
+
+function mapDispatchToProps(dispatch){ 
+    return bindActionCreators(
+        { createMessage: createMessage },
+        dispatch
+    );
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(MessageForm);
