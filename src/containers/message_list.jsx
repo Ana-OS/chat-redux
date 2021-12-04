@@ -26,18 +26,22 @@ class MessageList extends Component{
 
     render() {
         return(
-            <div>
-                <div className="message-list">
+            <div className="channel-container">
+                <div className="channel-title">
+                    <span>Channel #{this.props.selectedChannel}</span>
+                </div>
+                <div className="channel-content" ref={(list) => { this.list = list; }}>
                     {this.props.messages.map(message => <Message message={message} key={message.created_at}/>)}
                 </div>
-            < MessageForm />
+                < MessageForm />
             </div>
         )
     }
 }
 function mapStateToProps(state){
     return {
-        messages: state.messageList
+        messages: state.messageList,
+        selectedChannel: state.selectedChannel
     };
 }
 
